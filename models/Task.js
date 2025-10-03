@@ -16,9 +16,9 @@ const taskSchema = new mongoose.Schema({
     default: 'daily'
   },
   category: {
-    type: String,
-    default: 'todo',
-    trim: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true
   },
   completed: {
     type: Boolean,

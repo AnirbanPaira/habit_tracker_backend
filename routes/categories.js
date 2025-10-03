@@ -39,7 +39,7 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    await category.remove();
+    await category.deleteOne();
     res.json({ message: 'Category deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });

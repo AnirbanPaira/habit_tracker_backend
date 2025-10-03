@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const Category = require('../models/Category');
 const auth = require('../middleware/auth');
 
 // GET all tasks for a user
 router.get('/', auth, async (req, res) => {
   try {
     const userId = req.userId;
-    const tasks = await Task.find({ userId });
+    const tasks = await Task.find({ userId }).populate('category');
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -30,19 +31,40 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
+const findOrCreateCategory = async (userId, categoryName) => {
+  let category = await Category.findOne({ userId, name: categoryName });
+  if (!category) {
+    category = new Category({ userId, name: categoryName });
+    await category.save();
+  }
+  return category;
+};
+
 // POST create a new task
 router.post('/', auth, async (req, res) => {
-  const task = new Task({
-    name: req.body.name,
-    description: req.body.description,
-    frequency: req.body.frequency,
-    category: req.body.category || 'todo',
-    userId: req.userId
-  });
-
   try {
+    const userId = req.userId;
+    let category;
+    if (req.body.category) {
+      category = await Category.findById(req.body.category);
+      if (!category) {
+        return res.status(400).json({ message: 'Category not found' });
+      }
+    } else {
+      category = await findOrCreateCategory(userId, 'todo');
+    }
+
+    const task = new Task({
+      name: req.body.name,
+      description: req.body.description,
+      frequency: req.body.frequency,
+      category: category._id,
+      userId
+    });
+
     const newTask = await task.save();
-    res.status(201).json(newTask);
+    const populatedTask = await Task.findById(newTask._id).populate('category');
+    res.status(201).json(populatedTask);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -61,7 +83,18 @@ router.put('/:id', auth, async (req, res) => {
     if (req.body.name != null) task.name = req.body.name;
     if (req.body.description != null) task.description = req.body.description;
     if (req.body.frequency != null) task.frequency = req.body.frequency;
-    if (req.body.category != null) task.category = req.body.category;
+    if (req.body.category != null) {
+      let category;
+      if (req.body.category) {
+        category = await Category.findById(req.body.category);
+        if (!category) {
+          return res.status(400).json({ message: 'Category not found' });
+        }
+      } else {
+        category = await findOrCreateCategory(req.userId, 'todo');
+      }
+      task.category = category._id;
+    }
     if (req.body.completed != null) task.completed = req.body.completed;
 
     const updatedTask = await task.save();
