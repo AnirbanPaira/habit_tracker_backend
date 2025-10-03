@@ -7,6 +7,12 @@ dotenv.config();
 
 const app = express();
 
+// Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:5173', 'https://your-frontend-url.com'],
@@ -32,10 +38,37 @@ app.use('/api/habits', habitRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
-  res.send('Habit Tracker Backend API');
+  res.json({
+    message: 'Habit Tracker Backend API',
+    status: 'running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Handle 404 errors
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    path: req.path,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(`Error: ${err.message}`);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    path: req.path,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Current environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Current timestamp: ${new Date().toISOString()}`);
 });
