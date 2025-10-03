@@ -44,15 +44,8 @@ const findOrCreateCategory = async (userId, categoryName) => {
 router.post('/', auth, async (req, res) => {
   try {
     const userId = req.userId;
-    let category;
-    if (req.body.category) {
-      category = await Category.findById(req.body.category);
-      if (!category) {
-        return res.status(400).json({ message: 'Category not found' });
-      }
-    } else {
-      category = await findOrCreateCategory(userId, 'todo');
-    }
+    const categoryName = req.body.category || 'todo';
+    const category = await findOrCreateCategory(userId, categoryName);
 
     const task = new Task({
       name: req.body.name,
@@ -84,15 +77,8 @@ router.put('/:id', auth, async (req, res) => {
     if (req.body.description != null) task.description = req.body.description;
     if (req.body.frequency != null) task.frequency = req.body.frequency;
     if (req.body.category != null) {
-      let category;
-      if (req.body.category) {
-        category = await Category.findById(req.body.category);
-        if (!category) {
-          return res.status(400).json({ message: 'Category not found' });
-        }
-      } else {
-        category = await findOrCreateCategory(req.userId, 'todo');
-      }
+      const categoryName = req.body.category || 'todo';
+      const category = await findOrCreateCategory(req.userId, categoryName);
       task.category = category._id;
     }
     if (req.body.completed != null) task.completed = req.body.completed;
