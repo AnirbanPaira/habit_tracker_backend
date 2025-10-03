@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:8081', 'http://localhost:5173', 'https://your-frontend-url.com'],
+  origin: ['http://localhost:8081', 'http://localhost:5173', 'https://your-frontend-url.com', 'http://localhost:19006', 'http://192.168.31.203:8081'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -32,9 +32,11 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Routes
 const authRoutes = require('./routes/auth');
-const habitRoutes = require('./routes/habits');
+const taskRoutes = require('./routes/tasks');
+const categoryRoutes = require('./routes/categories');
 app.use('/api/auth', authRoutes);
-app.use('/api/habits', habitRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
