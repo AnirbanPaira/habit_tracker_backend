@@ -2,7 +2,7 @@
   "name": "habit-tracker-backend",
   "version": "1.0.0",
   "description": "Backend for Habit Tracker app using Node.js and MongoDB",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
