@@ -37,6 +37,7 @@ const categoryRoutes = require('./routes/categories');
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/reminder',reminderRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
