@@ -62,6 +62,7 @@ router.put("/:id", auth, async (req, res) => {
         time: req.body.time,
         date: req.body.date,
         category: req.body.category,
+        isCompleted: req.body.isCompleted,
       },
       { new: true }
     );
