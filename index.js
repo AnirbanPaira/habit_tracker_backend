@@ -39,7 +39,7 @@ const reminderRoutes = require('./routes/reminder');
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/reminder', reminderRoutes);
+app.use('/api/reminders', reminderRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
