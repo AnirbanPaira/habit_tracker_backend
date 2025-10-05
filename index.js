@@ -34,12 +34,12 @@ mongoose.connect(process.env.MONGO_URI, {
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const categoryRoutes = require('./routes/categories');
-const reminderRoutes = require('./routes/reminderRoutes');
+const reminderRoutes = require('./routes/reminder');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/reminder',reminderRoutes);
+app.use('/api/reminder', reminderRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
